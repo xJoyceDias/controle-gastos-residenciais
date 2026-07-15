@@ -1,0 +1,20 @@
+# .NET
+bin/
+obj/
+*.user
+
+# Node / React
+node_modules/
+dist/
+.vite/
+
+# Local database
+*.db
+*.db-shm
+*.db-wal
+
+# IDE / OS
+.vs/
+.vscode/
+*.suo
+Thumbs.db
