@@ -1,20 +1,116 @@
 # Controle de Gastos Residenciais
 
-Aplicação full stack para cadastro de pessoas, lançamentos financeiros e consulta de totais por pessoa e geral.
+Aplicação full stack desenvolvida para gerenciamento de gastos residenciais, permitindo o cadastro de pessoas, lançamento de receitas e despesas e consulta de totais individuais e gerais.
 
-## Tecnologias
+O projeto foi desenvolvido utilizando .NET 8 no back-end, React com TypeScript no front-end e SQLite para persistência dos dados.
 
-- Back-end: .NET 8, ASP.NET Core Minimal API, Entity Framework Core e SQLite.
-- Front-end: React 18, TypeScript e Vite.
-- Testes: xUnit com banco SQLite em memória.
+---
 
-O SQLite grava os dados em `backend/data/gastos.db`; por isso os cadastros permanecem após encerrar a aplicação.
+## Tecnologias utilizadas
 
-## Como executar
+### Back-end
 
-Pré-requisitos: [.NET SDK 8](https://dotnet.microsoft.com/download/dotnet/8.0) e Node.js 20+.
+- .NET 8
+- ASP.NET Core Minimal API
+- Entity Framework Core
+- SQLite
 
-Em dois terminais, a partir da raiz do repositório:
+### Front-end
+
+- React 18
+- TypeScript
+- Vite
+
+### Testes
+
+- xUnit
+- SQLite em memória
+
+---
+
+## Funcionalidades
+
+### Pessoas
+
+- Cadastro de pessoas
+- Listagem de pessoas
+- Exclusão de pessoas
+- Exclusão automática das transações vinculadas (Cascade Delete)
+
+Cada pessoa possui:
+
+- Identificador (GUID)
+- Nome
+- Idade
+
+---
+
+### Transações
+
+- Cadastro de receitas
+- Cadastro de despesas
+- Listagem de transações
+
+Cada transação possui:
+
+- Identificador (GUID)
+- Descrição
+- Valor
+- Tipo (Receita ou Despesa)
+- Pessoa vinculada
+
+---
+
+### Consulta de totais
+
+O sistema apresenta:
+
+- Total de receitas por pessoa
+- Total de despesas por pessoa
+- Saldo por pessoa
+
+Além disso, exibe:
+
+- Total geral de receitas
+- Total geral de despesas
+- Saldo líquido geral
+
+---
+
+## Regras de negócio implementadas
+
+- Os identificadores são gerados automaticamente utilizando GUID.
+- Não é possível cadastrar uma transação para uma pessoa inexistente.
+- Pessoas menores de 18 anos podem cadastrar apenas despesas.
+- Ao excluir uma pessoa, todas as suas transações são removidas automaticamente.
+- Os valores informados devem ser positivos.
+- O saldo é calculado pela diferença entre receitas e despesas.
+- Os dados permanecem salvos após o encerramento da aplicação através do banco SQLite.
+
+---
+
+## Estrutura do projeto
+
+```
+controle-gastos-residenciais
+│
+├── backend
+│   ├── ControleGastos.Api
+│   └── ControleGastos.Tests
+│
+└── frontend
+```
+
+---
+
+## Como executar o projeto
+
+### Pré-requisitos
+
+- .NET SDK 8
+- Node.js 20 ou superior
+
+### Back-end
 
 ```bash
 cd backend
@@ -22,57 +118,77 @@ dotnet restore
 dotnet run
 ```
 
+A API será iniciada em:
+
+```
+http://localhost:5080
+```
+
+---
+
+### Front-end
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Abra o endereço mostrado pelo Vite (normalmente `http://localhost:5173`). A API fica em `http://localhost:5080`.
+Abra no navegador o endereço informado pelo Vite (normalmente):
 
-Para executar os testes de regras de negócio:
+```
+http://localhost:5173
+```
+
+---
+
+## Executando os testes
+
+Na pasta **backend** execute:
 
 ```bash
-cd backend
 dotnet test
 ```
 
-## Regras de negócio implementadas
-
-- O identificador de pessoas e transações é um GUID, gerado automaticamente no servidor.
-- Não é possível criar uma transação para pessoa inexistente.
-- Pessoas com menos de 18 anos só podem receber lançamentos de `Despesa`.
-- Ao remover uma pessoa, suas transações são removidas junto (relacionamento com *cascade delete*).
-- Os totais retornam receitas, despesas e saldo (`receitas - despesas`) para cada pessoa e para o conjunto.
-- Valores são positivos; o tipo da transação define se soma receita ou despesa.
-
-## Estrutura
-
-```
-backend/                  API, domínio, persistência e testes
-frontend/                 interface React/TypeScript
-```
+---
 
 ## Endpoints
 
-| Método | Rota | Finalidade |
-| --- | --- | --- |
-| GET | `/api/pessoas` | Lista pessoas |
-| POST | `/api/pessoas` | Cria uma pessoa |
-| DELETE | `/api/pessoas/{id}` | Remove pessoa e suas transações |
-| GET | `/api/transacoes` | Lista transações |
-| POST | `/api/transacoes` | Cria uma transação |
-| GET | `/api/totais` | Consulta totais por pessoa e geral |
+### Pessoas
 
-## Publicação no GitHub
+| Método | Endpoint | Descrição |
+|---------|----------|-----------|
+| GET | /api/pessoas | Lista todas as pessoas |
+| POST | /api/pessoas | Cadastra uma pessoa |
+| DELETE | /api/pessoas/{id} | Remove uma pessoa e suas transações |
 
-```bash
-git init
-git add .
-git commit -m "feat: controle de gastos residenciais"
-git branch -M main
-git remote add origin https://github.com/SEU_USUARIO/controle-gastos-residenciais.git
-git push -u origin main
+### Transações
+
+| Método | Endpoint | Descrição |
+|---------|----------|-----------|
+| GET | /api/transacoes | Lista todas as transações |
+| POST | /api/transacoes | Cadastra uma transação |
+
+### Totais
+
+| Método | Endpoint | Descrição |
+|---------|----------|-----------|
+| GET | /api/totais | Retorna os totais por pessoa e o total geral |
+
+---
+
+## Persistência
+
+Os dados são armazenados em SQLite no arquivo:
+
+```
+backend/data/gastos.db
 ```
 
-Crie o repositório como **público** no GitHub antes do `push`.
+Dessa forma, as informações permanecem disponíveis mesmo após o encerramento da aplicação.
+
+---
+
+## Observações
+
+O projeto foi desenvolvido seguindo os requisitos propostos no desafio técnico, priorizando simplicidade, organização do código e separação entre as responsabilidades do back-end e do front-end.
